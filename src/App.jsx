@@ -35,7 +35,8 @@ const App = withPlatform(
           activePanel: 'home',
           qrCodes: [],
           activeModal: null,
-          currentQrIndex: 0
+          currentQrIndex: 0,
+          warningMessage: ''
         };
 
         this.closeModal = () => {
@@ -74,19 +75,37 @@ const App = withPlatform(
       setUrl(url) {
         try {
           url = new URL(url);
+          if (!['http:', 'https:'].includes(url.protocol)) {
+            throw new Error();
+          }
           const qrCodes = [...this.state.qrCodes];
-          qrCodes.push({
+          const newQrCode = {
             label: url.hostname,
             link: url.href,
             path: url.pathname,
             params: url.search.slice(1).split('&'),
             hash: url.hash
+          };
+          let hasCode = false;
+          qrCodes.forEach((code) => {
+            if (JSON.stringify(code) === JSON.stringify(newQrCode)) {
+              hasCode = true;
+            }
           });
-          this.setState({ qrCodes });
-          bridge.send('VKWebAppStorageSet', { key: 'qrCodes', value: JSON.stringify(this.state.qrCodes) });
+          if (!hasCode) {
+            qrCodes.push(newQrCode);
+            this.setState({ qrCodes });
+            bridge.send('VKWebAppStorageSet', { key: 'qrCodes', value: JSON.stringify(this.state.qrCodes) });
+          } else {
+            this.setState({
+              activeModal: 'warning',
+              warningMessage: 'Данная сcылка уже существует'
+            });
+          }
         } catch (e) {
           this.setState({
-            activeModal: 'warning'
+            activeModal: 'warning',
+            warningMessage: 'Попробуйте отсканировать валидную ссылку'
           });
         }
       }
@@ -123,7 +142,7 @@ const App = withPlatform(
               }}
             />
             <CountModal id="count" count={this.state.qrCodes.length} onClose={this.closeModal} />
-            <WarningModal id="warning" onClose={this.closeModal} />
+            <WarningModal id="warning" message={this.state.warningMessage} onClose={this.closeModal} />
           </ModalRoot>
         );
 
