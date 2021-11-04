@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import './assets/main.scss';
+import './assets/main.css';
 import App from './App.jsx';
 import { ConfigProvider, AdaptivityProvider, ANDROID, IOS, Scheme } from '@vkontakte/vkui';
 import bridge, { DefaultUpdateConfigData } from '@vkontakte/vk-bridge';
