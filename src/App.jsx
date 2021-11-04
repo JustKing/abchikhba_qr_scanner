@@ -78,6 +78,9 @@ const App = withPlatform(
           if (!['http:', 'https:'].includes(url.protocol)) {
             throw new Error();
           }
+          if (!['vk.com', 'm.vk.com'].includes(url.host)) {
+            throw new Error();
+          }
           const qrCodes = [...this.state.qrCodes];
           const newQrCode = {
             label: url.hostname,
@@ -105,7 +108,7 @@ const App = withPlatform(
         } catch (e) {
           this.setState({
             activeModal: 'warning',
-            warningMessage: 'Попробуйте отсканировать валидную ссылку'
+            warningMessage: 'Попробуйте отсканировать валидную ссылку (Валидной считается ссылка ведущая на vk.com или m.vk.com с любыми путями и параметрами)'
           });
         }
       }
