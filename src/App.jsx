@@ -1,4 +1,4 @@
-import { Icon28QrCodeOutline } from '@vkontakte/icons';
+import { Icon28QrCodeOutline, Icon24StickerOutline } from '@vkontakte/icons';
 import {
   AppRoot,
   SplitLayout,
@@ -36,7 +36,41 @@ const App = withPlatform(
           qrCodes: [],
           activeModal: null,
           currentQrIndex: 0,
-          warningMessage: ''
+          warningMessage: '',
+          stickers: [
+            {
+              sticker_type: 'renderable',
+              sticker: {
+                can_delete: 0,
+                content_type: 'image',
+                url: 'https://cdn.discordapp.com/attachments/282895727422603265/905864326781476864/Frame_1-3.png',
+                clickable_zones: [
+                  {
+                    action_type: 'app',
+                    action: {
+                      app_id: 7992855
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              sticker_type: 'renderable',
+              sticker: {
+                can_delete: 0,
+                content_type: 'image',
+                url: 'https://cdn.discordapp.com/attachments/282895727422603265/905863142553288744/Frame_1-2.png',
+                clickable_zones: [
+                  {
+                    action_type: 'app',
+                    action: {
+                      app_id: 7992855
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         };
 
         this.closeModal = () => {
@@ -108,7 +142,8 @@ const App = withPlatform(
         } catch (e) {
           this.setState({
             activeModal: 'warning',
-            warningMessage: 'Попробуйте отсканировать валидную ссылку (Валидной считается ссылка ведущая на vk.com или m.vk.com с любыми путями и параметрами)'
+            warningMessage:
+              'Попробуйте отсканировать валидную ссылку (Валидной считается ссылка ведущая на vk.com или m.vk.com с любыми путями и параметрами)'
           });
         }
       }
@@ -128,6 +163,14 @@ const App = withPlatform(
 
       goTo(link) {
         window.open(link);
+      }
+
+      makeHistory() {
+        bridge.send('VKWebAppShowStoryBox', {
+          background_type: 'image',
+          url: 'https://img3.akspic.ru/originals/6/2/1/3/5/153126-smartfon_micromax-cvetovoj_gradient-cvet-krasochnost-rozovyj-1080x1920.jpg',
+          stickers: [this.state.stickers[Math.round(Math.random())]]
+        });
       }
 
       render() {
@@ -159,6 +202,7 @@ const App = withPlatform(
                       left={
                         <PanelHeaderButton>
                           <Icon28QrCodeOutline width={28} height={28} onClick={() => this.openScanner()} />
+                          <Icon24StickerOutline width={28} height={28} onClick={() => this.makeHistory()} />
                         </PanelHeaderButton>
                       }
                     >
